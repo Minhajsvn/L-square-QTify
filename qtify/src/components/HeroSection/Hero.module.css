@@ -1,0 +1,21 @@
+.heroText{
+    font-weight: 600;
+    font-size: 32px;
+    line-height: 48px;
+    color: var(--color-white);
+}
+.img{
+    width: 212px;
+    height: 212px;
+}
+.wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+    
+}
+.textWrapper{
+    text-align: center;
+    padding: 20px;
+}
