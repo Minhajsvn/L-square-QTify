@@ -3,16 +3,16 @@ import styles from './Card.module.css';
 import { Tooltip, Chip } from "@mui/material";
 
 
-function Card({result, type}){
+function Card({data, type}){
     const getCard = (type) => {     
         switch (type) {
             case "album" : {
-                const { image, follows, title, slug, songs} = result;
+                const { image, follows, title, slug, songs} = data;
                 
                 return (
                 <Tooltip title={`${songs.length}`} placement="top" arrow>
                     <div className={styles.wrapper}>
-                        <a href={`/album/${slug}`}>
+                        <a href={`/album/${slug}`} className={styles.link}>
                             <div className={styles.card}>
                             <img className={styles.img} src={image} alt="" />
                                 <div className={styles.banner}>
@@ -28,7 +28,7 @@ function Card({result, type}){
                 )
             }
             case "song" : {
-                const { image, likes, title} = result;
+                const { image, likes, title} = data;
                             
                 return (
                     <div className={styles.wrapper}>
@@ -40,7 +40,7 @@ function Card({result, type}){
                             </div>
                             <div className={styles.titleWrapper}>
                                 <p>{title}</p>
-                        </div>
+                            </div>
                     </div>
                 )
             }
