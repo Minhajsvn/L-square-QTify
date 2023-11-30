@@ -1,28 +1,37 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useState } from 'react';
 import Card from '../Card/Card'
 import styles from '../Section/Section.module.css';
 import Carousel from '../Carousel/Carousel';
+import Filter from '../Filter/Filter';
 
 
+function Section({ title, data, filterSource, type}) {
 
-function Section({ title, data, type}) {
+  const [filters, setFilters] = useState([{key:"all", label:"All"}]);
+  const [selectedFilterIndex, setSelectedFilterIndex] = useState(0);
+  const [carouselToggle, setCarouselToggle] = useState(true);
 
-  const [carouselToggle, setCarouselToggle] = useState(true)
+  useEffect(() => {
+    if(filterSource){
+      filterSource().then((response) => {
+        const {data} = response;
+        setFilters([...filters, ...data]);
 
+      })
+    }
+  },[]);
+
+  const showFilters = filters.length > 1;
+  const cardsToRender = data.filter((card) => 
+    showFilters && selectedFilterIndex !== 0
+    ? card.genre.key === filters[selectedFilterIndex].key: card
+  )
+  
   const handleToggle = () => {
     setCarouselToggle((prevState) => !prevState)
   }
-
-// useEffect(() => { 
-//     const fetchData = async () => {
-//     const res = await fetchTopAlbum();
-//     setResult(res);
-//     }
-
-//     fetchData();
-// },[])
 
   return (
     <div>
@@ -30,11 +39,21 @@ function Section({ title, data, type}) {
           <div>
             <h3>{title}</h3>
           </div>
-          <div onClick={handleToggle} className={styles.toggleText}>
+          {!showFilters && (
+            <div onClick={handleToggle} className={styles.toggleText}>
               {!carouselToggle ? "Collapse All" : "Show All"}
-              {/* <a href='.' className={styles.btn}>Collapse</a>  */}
-          </div>
+            </div>
+          )}
         </div>
+          {showFilters && (
+            <div className={styles.filterWrapper}>
+              <Filter 
+                filters={filters}
+                selectedFilterIndex={selectedFilterIndex}
+                setSelectedFilterIndex={setSelectedFilterIndex}
+              />
+            </div>
+          )}
           {data.length === 0 ? 
           (
             <CircularProgress />
@@ -43,13 +62,13 @@ function Section({ title, data, type}) {
               {!carouselToggle ? 
               (<div 
                   className={styles.wrapper}>
-                   {data.map((cardData) => (
+                   {cardsToRender.map((cardData) => (
                       <Card key={cardData.id} data={cardData} type={type}/>
                   ))}
                 </div>  
               ) :(
                 <Carousel 
-                  data={data}
+                  data={cardsToRender}
                   renderComponent={(data) => <Card data={data} type={type}/>}
                 />
               )}
